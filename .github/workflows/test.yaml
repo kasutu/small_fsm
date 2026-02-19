@@ -1,0 +1,39 @@
+name: Test
+
+on: pull_request
+
+jobs:
+  test:
+    name: Test
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@v1
+
+  example:
+    name: Run example
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: example
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 'latest'
+
+      - name: 📦 Install dependencies
+        run: dart pub get
+
+      - name: 🔨 Run example
+        run: dart run main.dart
+
+  pub_scores:
+    name: Pub.dev scores
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/pana.yml@v1
+    with:
+      min_score: 160
+
+  semantic_pull_request:
+    name: Conventional commit checks
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
