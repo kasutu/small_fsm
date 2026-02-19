@@ -7,18 +7,20 @@ Supported state machine features:
 - States and events represented by enums
 - Optional callbacks on state entry, exit and transitions
 - Optional guard functions on state transitions
-- Fires events on transitions between states
+- `fire()` returns `bool` indicating if transition was allowed
+- Pluggable logging via `StateMachineLogger` interface
+- Stream of transition events
 
 ## Usage
 
-To get started create an instance of `StateMachine<S, E>` with the initial state and a map of transitions between states. The map of transitions should be a map of state enums to a list of valid `Transition` from that state. 
+To get started create an instance of `StateMachine<S, E>` with the initial state and a map of transitions between states. The map of transitions should be a map of state enums to a list of valid `Transition` from that state.
 
 When declaring an instance of `StateMachine` (or `FSM`), the type of the state and event enums must be explicitly specified in the generic type arguments (i.e. `StateMachine<State, Event>`). Failing to do so will reduce the compilers ability to validate the use of the state and event enums at compile time.
 
 Then call `fire` on the `StateMachine` instance to transition to the next state.
 
 ```dart
-import 'package:simple_fsm/simple_fsm.dart';
+import 'package:small_fsm/small_fsm.dart';
 
 enum State { water, ice, steam }
 enum Event { heat, cool }
@@ -46,7 +48,8 @@ final fsm = StateMachine<State, Event>(
   },
 );
 
-fsm.fire(Event.cool);
+final success = fsm.fire(Event.cool);
+print('Transition allowed: $success');
 ```
 
 State transition events can also be listened to using the `onTransition` stream.
@@ -59,15 +62,31 @@ fsm.onTransition.listen((event) {
 
 ## Logging
 
-To add logging to your state machine, simply pass a `Logger` instance to the `StateMachine` constructor.
+To add logging to your state machine, implement the `StateMachineLogger` interface or use the built-in `PrintLogger`.
+
+```dart
+// Built-in console logger
+final fsm = StateMachine<State, Event>(
+  logger: const PrintLogger(),
+  // ...
+);
+
+// Custom logger implementation
+class MyLogger implements StateMachineLogger {
+  @override
+  void logTransition(String event, String fromState, String toState) {
+    // Your logging logic here
+  }
+}
+```
 
 ## Type aliasing
 
 To reduce the verbosity of the code, the following type aliases are provided:
 
 ```dart
-typedef FSM = StateMachine;
-typedef Tx = Transition;
+typedef FSM<State extends Enum, Event extends Enum> = StateMachine<State, Event>;
+typedef Tx<State extends Enum, Event extends Enum> = Transition<State, Event>;
 ```
 
 This will allow you to write the following:
