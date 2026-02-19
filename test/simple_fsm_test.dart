@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
-import 'package:simple_fsm/simple_fsm.dart';
+import 'package:small_fsm/small_fsm.dart';
 
 enum State { steam, water, ice }
 
