@@ -10,7 +10,7 @@ environment:
 dependencies:
   small_fsm:
     path: ../
-  logging: ^1.0.0
+  logging: ^2.0.0
 
 dev_dependencies:
   lints: ^6.0.0

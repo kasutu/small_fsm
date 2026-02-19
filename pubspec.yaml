@@ -1,6 +1,6 @@
 name: small_fsm
 description: "An easy to use finite state machine implementation using enums for states and events."
-version: 1.0.0
+version: 2.0.0
 repository: https://github.com/kasutu/small_fsm
 
 environment:
